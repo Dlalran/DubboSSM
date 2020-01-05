@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+<!--    注意：该Spring配置文件未被任何Spring容器初始化，因此需要被Service的Spring配置文件所引入而完成初始化-->
+
+    <!--    通过PreferencesPlaceholderConfigurer加载Properties文件 第二种方法在MybatisPlusDemo中-->
+    <bean class="org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer">
+        <property name="location" value="classpath:db.properties"/>
+    </bean>
+
+    <!--    配置数据库信息，代替MyBatis的mybatis-comfig.xml，从Properties中获取参数-->
+    <bean id="datasource" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="${jdbc.driver}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+    </bean>
+
+    <!--    将SqlSessionFactory放入Spring IOC容器中，用于在SqlSessionDaoSupport获得SqlSession时注入-->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!--        传入数据源-->
+        <property name="dataSource" ref="datasource"/>
+        <!--        也可以批量注册某个目录下所有mapper.xml-->
+        <property name="mapperLocations" value="classpath:priv/howard/dubbossm/mapper/*.xml"/>
+        <property name="typeAliasesPackage" value="priv.howard.dubbossm.pojo"/>
+        <property name="configuration">
+            <bean class="org.apache.ibatis.session.Configuration">
+        <!--                使用驼峰命名法映射-->
+                <property name="mapUnderscoreToCamelCase" value="true"/>
+            </bean>
+        </property>
+    </bean>
+
+    <!--    通过MapperScannerConfigurer批量扫描Mapper并注册为MapperFactoryBean-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+        <property name="basePackage" value="priv.howard.dubbossm.mapper"/>
+    </bean>
+
+</beans>

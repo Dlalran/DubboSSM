@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+<!--        SpringIOC容器初始化时，加入Dao中Mapper的配置文件-->
+        <import resource="classpath:applicationContext-dao.xml"/>
+
+        <!--    配置Dubbo应用名称，此应用为提供者-->
+        <dubbo:application name="StudentService"/>
+        <!--    配置Zookeeper注册中心IP地址及端口号(默认2181)-->
+        <dubbo:registry protocol="zookeeper" address="zookeeper://127.0.0.1:2181"/>
+        <!--    注意：此处是注解式写法，在需提供的接口上加入注解来实现RPC-->
+        <!--    配置Dubbo要扫描注解的包，供RPC使用-->
+        <dubbo:annotation package="priv.howard.dubbossm.service.impl"/>
+        <!--        指定通信协议-->
+        <dubbo:protocol name="dubbo" port="20880"/>
+
+        <!--    配置Spring要扫描的包，注入IOC容器-->
+        <context:component-scan base-package="priv.howard.dubbossm.service.impl"/>
+</beans>
