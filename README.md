@@ -1,2 +1,2 @@
 # DubboSSM
-Dubbo Spring SpringMVC MyBatis Demo
+Dubbo Spring SpringMVC MyBatis Learning Demo
